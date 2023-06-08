@@ -1,0 +1,92 @@
+// Set up the canvas
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 400;
+document.body.appendChild(canvas);
+
+// Define colors
+const bgColor = '#000';
+const paddleColor = '#fff';
+const ballColor = '#fff';
+
+// Define the paddles and ball
+const paddleWidth = 10;
+const paddleHeight = 60;
+const ballSize = 10;
+
+let paddle1Y = canvas.height / 2 - paddleHeight / 2;
+let paddle2Y = canvas.height / 2 - paddleHeight / 2;
+let ballX = canvas.width / 2 - ballSize / 2;
+let ballY = canvas.height / 2 - ballSize / 2;
+let ballSpeedX = 4;
+let ballSpeedY = 4;
+
+// Handle user input
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'w' && paddle1Y > 0) {
+    paddle1Y -= 5;
+  }
+  if (event.key === 's' && paddle1Y < canvas.height - paddleHeight) {
+    paddle1Y += 5;
+  }
+  if (event.key === 'ArrowUp' && paddle2Y > 0) {
+    paddle2Y -= 5;
+  }
+  if (event.key === 'ArrowDown' && paddle2Y < canvas.height - paddleHeight) {
+    paddle2Y += 5;
+  }
+});
+
+// Game loop
+function update() {
+  // Move the ball
+  ballX += ballSpeedX;
+  ballY += ballSpeedY;
+
+  // Handle ball collisions with walls
+  if (ballY <= 0 || ballY >= canvas.height - ballSize) {
+    ballSpeedY *= -1;
+  }
+
+  // Handle ball collisions with paddles
+  if (
+    ballX <= paddleWidth &&
+    ballY + ballSize >= paddle1Y &&
+    ballY <= paddle1Y + paddleHeight
+  ) {
+    ballSpeedX *= -1;
+  }
+  if (
+    ballX + ballSize >= canvas.width - paddleWidth &&
+    ballY + ballSize >= paddle2Y &&
+    ballY <= paddle2Y + paddleHeight
+  ) {
+    ballSpeedX *= -1;
+  }
+
+  // Clear the canvas
+  context.fillStyle = bgColor;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the paddles and ball
+  context.fillStyle = paddleColor;
+  context.fillRect(0, paddle1Y, paddleWidth, paddleHeight);
+  context.fillRect(
+    canvas.width - paddleWidth,
+    paddle2Y,
+    paddleWidth,
+    paddleHeight
+  );
+
+  context.fillStyle = ballColor;
+  context.fillRect(ballX, ballY, ballSize, ballSize);
+
+  // Update the display
+  requestAnimationFrame(update);
+}
+
+// Start the game
+update();
+
+

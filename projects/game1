@@ -1,0 +1,81 @@
+// Set up the canvas
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 400;
+document.body.appendChild(canvas);
+
+// Define colors
+const bgColor = '#000';
+const platformColor = '#fff';
+const playerColor = '#f00';
+
+// Define the platform and player
+const platformWidth = 100;
+const platformHeight = 10;
+const playerSize = 20;
+
+const platform = {
+  x: canvas.width / 2 - platformWidth / 2,
+  y: canvas.height - platformHeight - 10,
+  width: platformWidth,
+  height: platformHeight,
+};
+
+const player = {
+  x: canvas.width / 2 - playerSize / 2,
+  y: canvas.height - platformHeight - playerSize - 10,
+  width: playerSize,
+  height: playerSize,
+  speed: 3,
+  isJumping: false,
+  jumpHeight: 100,
+};
+
+// Handle user input
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowLeft' && player.x > 0) {
+    player.x -= player.speed;
+  }
+  if (event.key === 'ArrowRight' && player.x < canvas.width - playerSize) {
+    player.x += player.speed;
+  }
+  if (event.key === 'ArrowUp' && !player.isJumping) {
+    player.isJumping = true;
+    jumpPlayer();
+  }
+});
+
+// Jump function
+function jumpPlayer() {
+  let jumpCount = 0;
+  const jumpInterval = setInterval(() => {
+    if (jumpCount >= player.jumpHeight) {
+      clearInterval(jumpInterval);
+      player.isJumping = false;
+    } else {
+      player.y -= 2;
+      jumpCount += 2;
+    }
+  }, 5);
+}
+
+// Game loop
+function update() {
+  // Clear the canvas
+  context.fillStyle = bgColor;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the platform and player
+  context.fillStyle = platformColor;
+  context.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+  context.fillStyle = playerColor;
+  context.fillRect(player.x, player.y, player.width, player.height);
+
+  // Update the display
+  requestAnimationFrame(update);
+}
+
+// Start the game
+update();
